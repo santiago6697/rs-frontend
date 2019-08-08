@@ -1,21 +1,114 @@
 <!--The content below is only a placeholder and can be replaced.-->
-<div style="text-align:center">
-  <h1>
-    Welcome to {{ title }}!
-  </h1>
-  <img width="300" alt="Angular Logo" src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNTAgMjUwIj4KICAgIDxwYXRoIGZpbGw9IiNERDAwMzEiIGQ9Ik0xMjUgMzBMMzEuOSA2My4ybDE0LjIgMTIzLjFMMTI1IDIzMGw3OC45LTQzLjcgMTQuMi0xMjMuMXoiIC8+CiAgICA8cGF0aCBmaWxsPSIjQzMwMDJGIiBkPSJNMTI1IDMwdjIyLjItLjFWMjMwbDc4LjktNDMuNyAxNC4yLTEyMy4xTDEyNSAzMHoiIC8+CiAgICA8cGF0aCAgZmlsbD0iI0ZGRkZGRiIgZD0iTTEyNSA1Mi4xTDY2LjggMTgyLjZoMjEuN2wxMS43LTI5LjJoNDkuNGwxMS43IDI5LjJIMTgzTDEyNSA1Mi4xem0xNyA4My4zaC0zNGwxNy00MC45IDE3IDQwLjl6IiAvPgogIDwvc3ZnPg==">
-</div>
-<h2>Here are some links to help you start: </h2>
-<ul>
-  <li>
-    <h2><a target="_blank" rel="noopener" href="https://angular.io/tutorial">Tour of Heroes</a></h2>
-  </li>
-  <li>
-    <h2><a target="_blank" rel="noopener" href="https://angular.io/cli">CLI Documentation</a></h2>
-  </li>
-  <li>
-    <h2><a target="_blank" rel="noopener" href="https://blog.angular.io/">Angular blog</a></h2>
-  </li>
-</ul>
 
-<router-outlet></router-outlet>
+<div class="row">
+    <div class="col s4 m4 l4">
+        <h2 class="text-align center">MAP</h2>
+        <!-- <div class="mapouter">
+            <div class="gmap_canvas z-depth-1">
+                <iframe width="500" height="500" id="gmap_canvas" src="https://maps.google.com/maps?q=university%20of%20san%20francisco&t=&z=13&ie=UTF8&iwloc=&output=embed" frameborder="0" scrolling="no" marginheight="0" marginwidth="0">
+                </iframe>
+            </div>
+        </div> -->
+        <!-- <input type="text" [(ngModel)]="message" placeholder="your message..."> -->
+        <!-- <div *ngFor="let marker of markers | async">
+            <button (click)="flyTo(marker)">{{ marker.properties.message }}</button>
+            <button (click)="removeMarker(marker)">Delete</button>
+        </div> -->
+
+        <div class="map" id="map"></div>
+    </div>
+    <div class="col s8 m8 l8">
+        <h4 class="text-align center">CONTENTS</h4>
+        <div class="row">
+            <div class="col s6 m6 l6">
+                <h6 class="text-align center">Features</h6>
+                <div class="container">
+                    <form (ngSubmit)="callApi()" [formGroup]="featuresForm">
+                        <!-- ([1: cash, 2: VISA, 2:mastercard-eurocard, 2:american-express, 3:bank-debit, 4:checks, 2:discover, 2: carter-blanche, 2:dinner-club, 2:visa, 2:japan-credit-bureau, 4:gift-certificates]) -->
+                        <div class="row">
+                            <div class="input-field col s12">
+                                <select class="materialize-select" id="Rpayment" formControlName="Rpayment" required>
+                                    <option value="1">Cash</option>
+                                    <option value="2">Mastercard - Eurocard</option>
+                                    <option value="2">American Express</option>
+                                    <option value="3">Bank - Debit</option>
+                                    <option value="4">Checks</option>
+                                    <option value="2">Discover</option>
+                                    <option value="2">Carter Blanche</option>
+                                    <option value="2">Dinners Club</option>
+                                    <option value="2">American Express</option>
+                                    <option value="2">Japan Credit Bureau</option>
+                                    <option value="4">Gift certificates</option>
+                                </select>
+                                <label for="Rpayment">Payment method:</label>
+                            </div>
+                        </div>
+                        <!-- (map to [1: none, 2: public, 2: fee, 2: street, 2: valet parking, 2: validated parking, 2: yes]) -->
+                        <div class="row">
+                            <div class="input-field col s12">
+                                <select class="materialize-select" id="parking_lot" formControlName="parking_lot" required>
+                                    <option value="1">None</option>
+                                    <option value="2">Public</option>
+                                    <option value="2">Fee</option>
+                                    <option value="2">Street</option>
+                                    <option value="2">Valet</option>
+                                    <option value="2">Validated</option>
+                                    <option value="2">Yes</option>
+                                </select>
+                                <label for="parking_lot">Parking:</label>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="input-field col s6">
+                                <select class="materialize-select" id="alcohol" formControlName="alcohol" required>
+                                    <option value="1">No alcohol</option>
+                                    <option value="2">Wine - Beer</option>
+                                    <option value="3">Full bar</option>
+                                </select>
+                                <label for="alcohol">Alcohol:</label>
+                            </div>
+                            <div class="input-field col s6">
+                                <select class="materialize-select" id="dress_code" formControlName="dress_code" required>
+                                    <option value="1">Informal</option>
+                                    <option value="2">Casual</option>
+                                    <option value="3">Formal</option>
+                                </select>
+                                <label for="dress_code">Dress code:</label>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="input-field col s12">
+                                <select class="materialize-select" id="accesibility" formControlName="accesibility" required>
+                                    <option value="1">No accesibility</option>
+                                    <option value="2">Completely</option>
+                                    <option value="3">Partially</option>
+                                </select>
+                                <label for="accesibility">Accesibility:</label>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="input-field col s12">
+                                <select class="materialize-select" id="price" formControlName="price" required>
+                                    <option value="1">Medium</option>
+                                    <option value="2">Low</option>
+                                    <option value="3">High</option>
+                                </select>
+                                <label for="price">Price:</label>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <button class="btn waves-effect waves-orange orange accent-3 right" type="submit" name="action">Submit
+                                <i class="material-icons right">send</i>
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <div class="col s6 m6 l6">
+                <h6 class="text-align center">Guesses</h6>
+                <h6 *ngIf="!places?.length">No suggestions available!</h6>
+                <h6 *ngIf="!!places?.length">{{places}}</h6>
+            </div>
+        </div>
+    </div>
+</div>

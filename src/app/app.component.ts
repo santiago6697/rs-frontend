@@ -30,8 +30,8 @@ export class AppComponent {
     /// default settings
     map: mapboxgl.Map;
     style = 'mapbox://styles/mapbox/outdoors-v9';
-    lat = 37.75;
-    lng = -122.41;
+    lat = 19.4326;
+    lng = -99.1332;
     message = 'Hello World!';
   
     // data
@@ -50,15 +50,18 @@ export class AppComponent {
   }
 
   callApi() {
-    this.service.loadPlaces(this.featuresForm.value).subscribe(response => this.places = response);
+    let features = this.featuresForm.value;
+    features.lat = this.lat;
+    features.lng = this.lng;
+    this.service.loadPlaces(features).subscribe(response => this.places = response);
   }
 
   private initializeMap() {
     /// locate the user
     if (navigator.geolocation) {
        navigator.geolocation.getCurrentPosition(position => {
-        this.lat = position.coords.latitude;
-        this.lng = position.coords.longitude;
+        // this.lat = position.coords.latitude;
+        // this.lng = position.coords.longitude;
         this.map.flyTo({
           center: [this.lng, this.lat]
         })
@@ -72,7 +75,7 @@ export class AppComponent {
     this.map = new mapboxgl.Map({
       container: 'map',
       style: this.style,
-      zoom: 13,
+      zoom: 10,
       center: [this.lng, this.lat]
     });
 

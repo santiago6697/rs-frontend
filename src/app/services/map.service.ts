@@ -6,6 +6,7 @@ import * as mapboxgl from 'mapbox-gl';
 
 @Injectable()
 export class MapService {
+  marker: GeoJson
 
   constructor() {
     mapboxgl.accessToken = environment.mapbox.accessToken
@@ -13,12 +14,12 @@ export class MapService {
 
 
   getMarkers(): any {
-    // return this.db.list('/markers')
+    return this.marker
   }
 
   createMarker(data: GeoJson) {
-    // return this.db.list('/markers')
-    //               .push(data)
+    this.marker = data
+    return this.marker
   }
 
   removeMarker($key: string) {

@@ -27,26 +27,25 @@ export class AppComponent {
     price: new FormControl('1')
   });
 
-    /// default settings
-    map: mapboxgl.Map;
-    style = 'mapbox://styles/mapbox/outdoors-v9';
-    lat = 19.4326;
-    lng = -99.1332;
-    message = 'Hello World!';
-  
-    // data
-    source: any;
-    markers: any;
-  
+  /// default settings
+  map: mapboxgl.Map;
+  style = 'mapbox://styles/mapbox/outdoors-v9';
+  lat = 19.4326;
+  lng = -99.1332;
+  message = 'Your location';
 
-  constructor(private service: ApiRequestService, private mapService: MapService) {}
+  // data
+  source: any;
+  marker: any;
+
+
+  constructor(private service: ApiRequestService, private mapService: MapService) { }
 
   // TODO: CHANGE ONINIT TO BUTTON ACTION OR ANYTHING ALIKE TO PERFORM API REQUEST.
-  ngOnInit() { 
+  ngOnInit() {
     this.service.loadPlaces(this.featuresForm.value).subscribe(response => this.places = response);
     M.AutoInit();
-    this.markers = this.mapService.getMarkers()
-    this.initializeMap()
+    this.initializeMap();
   }
 
   callApi() {
@@ -59,7 +58,7 @@ export class AppComponent {
   private initializeMap() {
     /// locate the user
     if (navigator.geolocation) {
-       navigator.geolocation.getCurrentPosition(position => {
+      navigator.geolocation.getCurrentPosition(position => {
         // this.lat = position.coords.latitude;
         // this.lng = position.coords.longitude;
         this.map.flyTo({
@@ -87,8 +86,12 @@ export class AppComponent {
     //// Add Marker on Click
     this.map.on('click', (event) => {
       const coordinates = [event.lngLat.lng, event.lngLat.lat]
-      const newMarker   = new GeoJson(coordinates, { message: this.message })
-      this.mapService.createMarker(newMarker)
+      this.lng = event.lngLat.lng;
+      this.lat = event.lngLat.lat;
+      const newMarker = new GeoJson(coordinates, { message: this.message })
+      this.mapService.createMarker(newMarker);
+      if (!!this.map.getLayer('points')) this.removeMarker('points');
+      this.addMarker();
     })
 
 
@@ -97,51 +100,95 @@ export class AppComponent {
 
       /// register source
       this.map.addSource('firebase', {
-         type: 'geojson',
-         data: {
-           type: 'FeatureCollection',
-           features: []
-         }
+        type: 'geojson',
+        data: {
+          type: 'FeatureCollection',
+          features: []
+        }
       });
 
       /// get source
       this.source = this.map.getSource('firebase')
 
       /// subscribe to realtime database and set data source
-      // this.markers.subscribe(markers => {
+      // this.marker.subscribe(markers => {
       //     let data = new FeatureCollection(markers)
       //     this.source.setData(data)
       // })
 
       /// create map layers with realtime data
-      this.map.addLayer({
-        id: 'firebase',
-        source: 'firebase',
-        type: 'symbol',
-        layout: {
-          'text-field': '{message}',
-          'text-size': 24,
-          'text-transform': 'uppercase',
-          'icon-image': 'rocket-15',
-          'text-offset': [0, 1.5]
-        },
-        paint: {
-          'text-color': '#f16624',
-          'text-halo-color': '#fff',
-          'text-halo-width': 2
-        }
-      })
+      // this.map.addLayer({
+      //   "id": "points",
+      //   "type": "symbol",
+      //   "source": {
+      //     "type": "geojson",
+      //     "data": {
+      //       "type": "FeatureCollection",
+      //       "features": [{
+      //         "type": "Feature",
+      //         "geometry": {
+      //           "type": "Point",
+      //           "coordinates": [this.lng, this.lat]
+      //         },
+      //         "properties": {
+      //           "title": this.message,
+      //           "icon": "monument"
+      //         }
+      //       }]
+      //     }
+      //   },
+      //   "layout": {
+      //     "icon-image": "{icon}-15",
+      //     "text-field": "{title}",
+      //     "text-font": ["Open Sans Semibold", "Arial Unicode MS Bold"],
+      //     "text-offset": [0, 0.6],
+      //     "text-anchor": "top"
+      //   }
+      // });
 
     })
 
 
-  
 
-}
+
+  }
   /// Helpers
 
+  addMarker() {
+    this.map.addLayer({
+      "id": "points",
+      "type": "symbol",
+      "source": {
+        "type": "geojson",
+        "data": {
+          "type": "FeatureCollection",
+          "features": [{
+            "type": "Feature",
+            "geometry": {
+              "type": "Point",
+              "coordinates": [this.lng, this.lat]
+            },
+            "properties": {
+              "title": this.message,
+              "icon": "monument"
+            }
+          }]
+        }
+      },
+      "layout": {
+        "icon-image": "{icon}-15",
+        "text-field": "{title}",
+        "text-font": ["Open Sans Semibold", "Arial Unicode MS Bold"],
+        "text-offset": [0, 0.6],
+        "text-anchor": "top"
+      }
+    });
+  }
+
   removeMarker(marker) {
-    this.mapService.removeMarker(marker.$key)
+    // this.mapService.removeMarker(marker.$key)
+    this.map.removeLayer(marker);
+    this.map.removeSource(marker);
   }
 
   flyTo(data: GeoJson) {
